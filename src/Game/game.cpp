@@ -129,19 +129,24 @@ void Game::update(){
     // if it crashes top or bottom of the window
     if((ball.y + ball.h) >= window_height || ball.y <= 0){
         dy *= -1;
-        ball_speed *= 1.05;  // Aumenta la velocidad
+        ball_speed *= 1.15;  // Aumenta la velocidad
+        std::cout << "ADD VEL" << std::endl;
     }
 
     // if it hits player's 1 paddle
     if(ball.y + ball.h >= paddlePlayer1.y && ball.y <= paddlePlayer1.y + paddlePlayer1.h && ball.x <= paddlePlayer1.x + paddlePlayer1.w){
         dx *= -1.2;
-        ball_speed *= 1.05;  // Aumenta la velocidad
+        ball_speed *= 1.15;  // Aumenta la velocidad
+        std::cout << "ADD VEL" << std::endl;
+
     }
 
     // if it hits player's 2 paddle
     if(ball.y  <= paddlePlayer2.y + paddlePlayer2.h && ball.y + ball.h >= paddlePlayer2.y && ball.x + ball.w >= paddlePlayer2.x){
         dx *= -1.2;
-        ball_speed *= 1.05;  // Aumenta la velocidad
+        ball_speed *= 1.15;  // Aumenta la velocidad
+        std::cout << "ADD VEL" << std::endl;
+
     }
 
     // ball movement
