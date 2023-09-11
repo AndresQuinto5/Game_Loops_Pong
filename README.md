@@ -2,7 +2,8 @@
 
 ## Objetivo
 
-El objetivo de este laboratorio es preparar y configurar tu ambiente de desarrollo, así como establecer el esqueleto base para tu motor de juego ("engine").
+El objetivo de esta tarea es que preparen y configuren su ECS. 
+Reimplementar el juego de pong de la tarea 1 usando entt o un ECS desarrollado por ustedes. 
 
 ## Requisitos de Lenguaje y Librerías
 
@@ -21,7 +22,7 @@ Utilizando el "engine" que hayas preparado y en base a lo aprendido en clase, de
 
 ### Mecánicas de Juego
 
-- El juego debe utilizar movimiento frame-based.
+- Utilicen movimiento time based (delta time).
 - Debe existir una "pelota" que se moverá continuamente por la pantalla.
 
 #### Interacciones con "Paddle"
