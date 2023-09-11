@@ -119,22 +119,29 @@ void Game::update(){
     // if it crashes right or left side of the window
     if((ball.x + ball.w) >= window_width || ball.x <= 0){
         isRunning = false;
-        std::cout << "A player wins ..." << std::endl;
+        if (ball.x + ball.w >= window_width) {
+            std::cout << "Player 1 wins ..." << std::endl;
+        } else if (ball.x <= 0) {
+            std::cout << "Player 2 wins ..." << std::endl;
+        }
     }
     
     // if it crashes top or bottom of the window
     if((ball.y + ball.h) >= window_height || ball.y <= 0){
         dy *= -1;
+        ball_speed *= 1.05;  // Aumenta la velocidad
     }
 
-        // if it hits player's 1 paddle
+    // if it hits player's 1 paddle
     if(ball.y + ball.h >= paddlePlayer1.y && ball.y <= paddlePlayer1.y + paddlePlayer1.h && ball.x <= paddlePlayer1.x + paddlePlayer1.w){
         dx *= -1.2;
+        ball_speed *= 1.05;  // Aumenta la velocidad
     }
 
     // if it hits player's 2 paddle
     if(ball.y  <= paddlePlayer2.y + paddlePlayer2.h && ball.y + ball.h >= paddlePlayer2.y && ball.x + ball.w >= paddlePlayer2.x){
         dx *= -1.2;
+        ball_speed *= 1.05;  // Aumenta la velocidad
     }
 
     // ball movement
@@ -143,16 +150,16 @@ void Game::update(){
 };
 
 
+
 void Game::render(){
     std::cout << "Game Rendering..." << std::endl;
-    SDL_SetRenderDrawColor(renderer, 10, 10, 30, 1);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 1);
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 1);
     SDL_RenderFillRect(renderer, &ball);
     SDL_RenderFillRect(renderer,&paddlePlayer1);
     SDL_RenderFillRect(renderer,&paddlePlayer2);
     SDL_RenderPresent(renderer);
-
 };
 
 void Game::clean(){
