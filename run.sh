@@ -1,3 +1,3 @@
 #! /bin/sh
 
-./configure.sh ; ./build.sh && ./build/PongProject
+./configure.sh ; ./build.sh && ./build/Pong
