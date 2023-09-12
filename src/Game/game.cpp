@@ -70,24 +70,25 @@ float dy = 1.0f;
 bool playing = true;
 bool player1Won = false;
 
-void ballMovementSystem() {
+void ballMovementSystem(float dT) {
     PositionComponent& pad1Position = mRegistry.get<PositionComponent>(paddle1);
     CubeComponent& pad1Rect = mRegistry.get<CubeComponent>(paddle1);
     PositionComponent& pad2Position = mRegistry.get<PositionComponent>(paddle2);
     CubeComponent& pad2Rect = mRegistry.get<CubeComponent>(paddle2);
-
+    
     auto view2 = mRegistry.view<BallComponent, PositionComponent, CubeComponent>();
     for (const entt::entity e : view2) {
         PositionComponent& pos = view2.get<PositionComponent>(e);
         CubeComponent& rect = view2.get<CubeComponent>(e);
 
-        // Actualizar la posición de la pelota utilizando Delta Time (dT)
-        pos.x += speed * dx * dT;
-        pos.y += speed * dy * dT;
+        // Actualizar la posición de la pelota usando DELTA TIME
+        pos.x += speed * dx;
+        pos.y += speed * dy;
+
 
         // Si la pelota toca la parte superior o inferior de la ventana
         if (pos.y + rect.h >= SCREEN_HEIGHT || pos.y <= 0){
-            dy *= -1.25f;  // Invierte la dirección y aumenta la velocidad en un 25%
+            dy *= -1.15f;  // Invierte la dirección y aumenta la velocidad
         }
 
         // Si la pelota toca los lados de la ventana
@@ -102,16 +103,19 @@ void ballMovementSystem() {
 
         // Colisión con el paddle 1
         if (pos.y + rect.h >= pad1Position.y && pos.y <= pad1Position.y + pad1Rect.h && pos.x <= pad1Position.x + pad1Rect.w && pos.x + rect.w >= pad1Position.x){
-            dx *= -1.25f;  // Invierte la dirección y aumenta la velocidad en un 25%
+            dx *= -1.05f;  // Invierte la dirección y aumenta la velocidad
         }
 
         // Colisión con el paddle 2
         if (pos.y <= pad2Position.y + pad2Rect.h && pos.y + rect.h >= pad2Position.y && pos.x <= pad2Position.x + pad2Rect.w && pos.x + rect.w >= pad2Position.x){
-            dx *= -1.25f;  // Invierte la dirección y aumenta la velocidad en un 25%
+            dx *= -1.05f;  // Invierte la dirección y aumenta la velocidad
         }
+
+        // Actualizar la posición de la pelota de nuevo, esto puede ser opcional según cómo estés manejando tu bucle principal
+        pos.x += speed * dx;
+        pos.y += speed * dy;
     }
 }
-
 
 void cubeRenderSystem(SDL_Renderer* renderer) {
   SDL_SetRenderDrawColor(renderer, 255, 255 ,255, 1);
@@ -166,12 +170,9 @@ void Game::setup(){
 }
 
 void Game::frameStart(){
-    frameStartTimeStamp = SDL_GetTicks();
-
-    
-    if (frameEndTimeStamp){
-        dT = (frameEndTimeStamp - frameStartTimeStamp) /1000.0f;
-    }
+    Uint32 currentTime = SDL_GetTicks();
+    dT = (currentTime - frameStartTimeStamp) / 1000.0f;
+    frameStartTimeStamp = currentTime; // Actualizar para el próximo frame
 }
 
 void Game::frameEnd(){
@@ -238,13 +239,12 @@ void Game::handleEvents(){
 
 
 void Game::update(){
-
-
-    ballMovementSystem();
+    ballMovementSystem(dT);
     isRunning = playing;
     winnerTop = player1Won;
 
 }
+
 void Game::render(){
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -257,6 +257,7 @@ void Game::render(){
     SDL_RenderPresent(renderer);
 
 }
+
 void Game::clean(){
 
     SDL_DestroyWindow(window);
@@ -271,6 +272,7 @@ void Game::clean(){
     }
 
 }
+
 bool Game::running(){
     return isRunning;
 }
