@@ -75,43 +75,48 @@ void ballMovementSystem() {
     CubeComponent& pad1Rect = mRegistry.get<CubeComponent>(paddle1);
     PositionComponent& pad2Position = mRegistry.get<PositionComponent>(paddle2);
     CubeComponent& pad2Rect = mRegistry.get<CubeComponent>(paddle2);
-
+    
     auto view2 = mRegistry.view<BallComponent, PositionComponent, CubeComponent>();
     for (const entt::entity e : view2) {
         PositionComponent& pos = view2.get<PositionComponent>(e);
         CubeComponent& rect = view2.get<CubeComponent>(e);
 
-        // Actualizar la posición de la pelota utilizando Delta Time (dT)
-        pos.x += speed * dx * dT;
-        pos.y += speed * dy * dT;
+        pos.x += speed * dx;
+        pos.y += speed * dy;
 
-        // Si la pelota toca la parte superior o inferior de la ventana
-        if (pos.y + rect.h >= SCREEN_HEIGHT || pos.y <= 0){
-            dy *= -1.25f;  // Invierte la dirección y aumenta la velocidad en un 25%
-        }
-
-        // Si la pelota toca los lados de la ventana
-        if (pos.x + rect.w >= SCREEN_WIDTH){
+        if (pos.y + rect.h >= SCREEN_HEIGHT){
             playing = false;
             player1Won = true;
         }
-        if (pos.x <= 0){
+
+        if (pos.y <= 0){
             playing = false;
             player1Won = false;
+            
         }
 
-        // Colisión con el paddle 1
-        if (pos.y + rect.h >= pad1Position.y && pos.y <= pad1Position.y + pad1Rect.h && pos.x <= pad1Position.x + pad1Rect.w && pos.x + rect.w >= pad1Position.x){
-            dx *= -1.25f;  // Invierte la dirección y aumenta la velocidad en un 25%
+        if (pos.x + rect.w >= SCREEN_WIDTH){
+            dx *= -1.05f;
         }
 
-        // Colisión con el paddle 2
-        if (pos.y <= pad2Position.y + pad2Rect.h && pos.y + rect.h >= pad2Position.y && pos.x <= pad2Position.x + pad2Rect.w && pos.x + rect.w >= pad2Position.x){
-            dx *= -1.25f;  // Invierte la dirección y aumenta la velocidad en un 25%
+        if (pos.x <= 0){
+            dx *= -1.05f;
         }
+
+        if (pos.y + rect.h >= pad1Position.y && pos.x + rect.w >= pad1Position.x && pos.x <= pad1Position.x + pad1Rect.w){
+            dy *= -1.05f;
+            dy *= 1.05f;
+        }
+
+        if (pos.y <= pad2Rect.h && pos.x + rect.w >= pad2Position.x && pos.x <= pad2Position.x + pad2Rect.w){
+            dy *= -1.05f;
+            dy *= 1.05f;
+        }
+
+        pos.x += speed * dx;
+        pos.y += speed * dy;
     }
 }
-
 
 void cubeRenderSystem(SDL_Renderer* renderer) {
   SDL_SetRenderDrawColor(renderer, 255, 255 ,255, 1);
@@ -146,14 +151,14 @@ void Game::setup(){
 
     PositionComponent paddle1Position = {0, SCREEN_HEIGHT / 2 - 100};
     VelocityComponent paddle1Velocity = {0, 0};
-    CubeComponent paddle1Rect = {20, 200};
+    CubeComponent paddle1Rect = {200, 20};
     PlayerComponent paddle1Player = {1};
 
     createPlayerEntity(paddle1Position, paddle1Velocity, paddle1Rect, paddle1Player);
 
     PositionComponent paddle2Position = {SCREEN_WIDTH - 20, SCREEN_HEIGHT / 2 - 100};
     VelocityComponent paddle2Velocity = {0, 0};
-    CubeComponent paddle2Rect = {20, 200};
+    CubeComponent paddle2Rect = {200, 20};
     PlayerComponent paddle2Player = {2};
 
     createPlayerEntity(paddle2Position, paddle2Velocity, paddle2Rect, paddle2Player);
@@ -250,6 +255,7 @@ void Game::render(){
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
+    SDL_SetRenderDrawColor(renderer, 255, 192, 203, 1);
 
     cubeRenderSystem(renderer); 
 
@@ -264,11 +270,13 @@ void Game::clean(){
     SDL_Quit();
     std::cout << "GAME OVER" << std::endl;
     if (winnerTop){
-        std::cout << "PLAYER 1 WINS" << std::endl;
+        std::cout << "TOP PLAYER WINS" << std::endl;
     }
     else{
-        std::cout << "PLAYER 2 WINS" << std::endl;
+        std::cout << "BOTTOM PLAYER WINS" << std::endl;
     }
+    
+
 
 }
 bool Game::running(){

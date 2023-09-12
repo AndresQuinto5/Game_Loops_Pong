@@ -1,16 +1,15 @@
 #include <iostream>
 #include "Game/game.h"
 
-
-
 Game *game = nullptr;
 
-int main() {
+int main(int argc, const char * argv[]){
     game = new Game();
-    game->init("PongGame", 1200, 800);
+
+    game->init("MY GAME");
     game->setup();
-    while (game->running())
-    {
+
+    while(game->running()){
         game->frameStart();
         game->handleEvents();
         game->update();
@@ -19,7 +18,6 @@ int main() {
     }
 
     game->clean();
-
 
     return 0;
 }

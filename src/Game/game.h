@@ -1,36 +1,43 @@
+
 #ifndef GAME_H
 #define GAME_H
 #include <SDL2/SDL.h>
-// Include guards 
- class Game {
+#include <SDL2/SDL_image.h>
 
+class Game {
+    
+    
     public:
         Game();
         ~Game();
-        void init(const char* title, int width, int height);
+
+        void init(const char* title);
         void setup();
-        void frameStart();
-        void frameEnd();
         void handleEvents();
         void update();
         void render();
         void clean();
         bool running();
+        void frameStart();
+        void frameEnd();
+
+
 
     private:
-        int window_width;
-        int window_height;
-        int counter;
         bool isRunning;
+        bool winnerTop;
         SDL_Window *window;
         SDL_Renderer *renderer;
+        int counter;
+        int window_width;
+        int window_height;
+
         int FPS;
-        Uint64 frameStartTimestamp;
-        Uint64 frameEndTimeStamp;
+        Uint32 frameStartTimeStamp;
+        Uint32 frameEndTimeStamp;
         float frameDuration;
-        float dT;
+        double dT;
+        
+};
 
- };
-
-
- #endif
+#endif

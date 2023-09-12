@@ -13,7 +13,7 @@ read -p "¿Deseas hacer un push al repositorio remoto? (s/n): " respuesta
 
 case $respuesta in
   [sS]|[yY])
-    git push origin main
+    git push
     ;;
   *)
     echo "Operación de push cancelada."

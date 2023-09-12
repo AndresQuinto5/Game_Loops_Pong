@@ -1,20 +1,14 @@
 cmake_minimum_required(VERSION 3.27)
 
-project(Pong VERSION 1.0)
-set(CMAKE_CXX_STANDARD 23)
-add_executable(Pong src/main.cpp src/Game/game.cpp src/Game/game.h)
+project(MYGAME VERSION 1.0)
 
-add_subdirectory(src/Math)
-target_include_directories(
-    Pong PUBLIC src/Math
-)
+add_executable(${PROJECT_NAME} src/main.cpp src/Game/game.cpp src/Game/game.h)
 
-target_link_directories(
-    Pong PRIVATE src/Math
-)
 
 target_link_libraries(
-    Pong
-    math
+    ${PROJECT_NAME}
     SDL2
+    SDL2_image
+    SDL2main
 )
+
