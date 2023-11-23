@@ -38,3 +38,5 @@ Este proyecto tiene como objetivo practicar el uso de lenguajes de scripting par
 
 ## Conclusión
 Este laboratorio ha sido una oportunidad valiosa para aprender sobre el scripting en el desarrollo de juegos y la implementación de inteligencia artificial básica en un entorno de juego interactivo. Los desafíos encontrados y superados han reforzado la comprensión de los principios de programación y han proporcionado una experiencia práctica en la resolución de problemas y la optimización del código.
+
+![Ejemplo de ECS](ECS.gif)
