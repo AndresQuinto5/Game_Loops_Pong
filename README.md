@@ -1,82 +1,40 @@
-# Laboratorio de Desarrollo de Juego Pong
 
-## Objetivo
+# Engine Scripting Lab: Pong
 
-El objetivo de esta tarea es que preparen y configuren su ECS. 
-Reimplementar el juego de pong de la tarea 1 usando entt o un ECS desarrollado por ustedes. 
+## Objetivo del Proyecto
+Este proyecto tiene como objetivo practicar el uso de lenguajes de scripting para ampliar y personalizar las funcionalidades de un motor de juegos. Se ha elegido implementar una versión del juego clásico Pong con un enfoque en la programación de una inteligencia artificial (IA) para el jugador 2 utilizando Lua u otro lenguaje de scripting.
 
-## Requisitos de Lenguaje y Librerías
+## Funcionalidades Clave
+- Dos jugadores representados por "paddles" que se mueven verticalmente.
+- El jugador 1 es controlado por el teclado.
+- Una pelota que se mueve continuamente, cambiando de dirección y acelerando al interactuar con paddles y paredes.
+- IA para el jugador 2, ajustando su velocidad para interceptar la pelota.
 
-- Debes utilizar un lenguaje de programación de nivel relativamente bajo como C++ o Lua. Si deseas utilizar un lenguaje diferente, es necesario que te comuniques con el instructor para obtener aprobación.
-- Puedes utilizar librerías base como SDL2, SFML o GLFW. Si deseas utilizar otras librerías, también debes someterlas a aprobación.
+## Desarrollos y Aprendizajes
 
-## Especificaciones del Juego
+### Implementación del Paddle Controlado por IA
+- **Desarrollo:** Creación de un sistema `autoPaddleMovementSystem` para mover automáticamente el paddle 2.
+- **Aprendizaje:** La importancia de ajustar la velocidad del paddle de la IA basándose en la posición de la pelota.
 
-Utilizando el "engine" que hayas preparado y en base a lo aprendido en clase, debes crear un pequeño juego de Pong con las siguientes características:
+### Problemas de Compilación y Soluciones
+- **Desafío:** Errores de compilación al implementar el sistema de IA.
+- **Solución:** Corrección de referencias y uso adecuado de variables y componentes existentes.
 
-### Jugadores y Controles
+### Ajustes en la Velocidad de la IA
+- **Desafío:** Movimiento inicialmente imperceptible del paddle de la IA.
+- **Solución:** Incremento de la velocidad de la IA para mejorar su visibilidad y reactividad.
 
-- Debe haber dos jugadores.
-- Cada jugador controlará un "paddle" que se podrá mover solo verticalmente en la pantalla.
-- Los controles deben ser a través del teclado.
+### Optimización del Paddle Controlado Manualmente
+- **Desafío:** Problemas de movimiento en el paddle controlado manualmente después de ajustar la IA.
+- **Solución:** Depuración y ajustes en el código para garantizar una respuesta adecuada a las entradas del usuario.
 
-### Mecánicas de Juego
+### Diferenciación en las Velocidades de los Paddles
+- **Desafío:** Velocidad de la IA inadecuada para el control manual.
+- **Solución:** Implementación de constantes de velocidad distintas para el control manual y la IA.
 
-- Utilicen movimiento time based (delta time).
-- Debe existir una "pelota" que se moverá continuamente por la pantalla.
+### Continua Depuración y Ajuste
+- **Desafío:** Necesidad de ajustes continuos y depuración durante el desarrollo.
+- **Solución:** Proceso iterativo de prueba y error para refinar el juego y su funcionalidad.
 
-#### Interacciones con "Paddle"
-
-- Cuando la pelota toque un "paddle", su dirección en el eje X debe invertirse y su velocidad debe aumentar.
-
-#### Interacciones con Paredes
-
-- Si la pelota toca la pared superior o inferior, su movimiento en el eje Y debe invertirse y su velocidad debe aumentar.
-- Si la pelota toca la pared izquierda o derecha, el juego debe cerrarse y se debe mostrar un mensaje en la consola indicando qué jugador ha ganado (el jugador opuesto a la pared que causó que el juego terminara).
-
-
-## Cómo Correr el Proyecto
-
-Este proyecto incluye varios scripts que facilitan la compilación, ejecución y gestión del repositorio de Git. A continuación se describen los scripts disponibles:
-
-### build.sh
-
-Este script compila el proyecto. Para ejecutarlo, abre una terminal y navega hasta la carpeta del proyecto. Luego, ejecuta:
-
-```bash
-./build.sh
-```
-
-### clean.sh
-
-Este script limpia los archivos generados durante la compilación. Úsalo si deseas hacer una compilación limpia:
-
-```bash
-./clean.sh
-```
-
-### configure.sh
-
-Este script configura el proyecto para la compilación, generando archivos necesarios. Ejecútalo antes de `build.sh`:
-
-```bash
-./configure.sh
-```
-
-### github.sh
-
-Este script te ayuda a hacer commits al repositorio de GitHub. Para usarlo, proporciona un mensaje de commit como argumento:
-
-```bash
-./github.sh "tu mensaje de commit aquí"
-```
-
-Este script también te preguntará si deseas hacer un push al repositorio remoto después de hacer el commit.
-
-### run.sh
-
-Este script ejecuta el proyecto. Asegúrate de haber compilado el proyecto con `build.sh` antes de ejecutar este script:
-
-```bash
-./run.sh
-```
+## Conclusión
+Este laboratorio ha sido una oportunidad valiosa para aprender sobre el scripting en el desarrollo de juegos y la implementación de inteligencia artificial básica en un entorno de juego interactivo. Los desafíos encontrados y superados han reforzado la comprensión de los principios de programación y han proporcionado una experiencia práctica en la resolución de problemas y la optimización del código.
