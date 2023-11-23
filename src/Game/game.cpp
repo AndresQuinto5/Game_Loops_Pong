@@ -6,7 +6,9 @@
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
 int speed = 2;
-int player_speed = 50;
+const int MANUAL_PADDLE_SPEED = 50;  // Velocidad para el paddle controlado manualmente
+const int AI_PADDLE_SPEED = 500;     // Velocidad para el paddle controlado por la IA
+
 
 entt::registry mRegistry;
 entt::entity paddle1, paddle2;
@@ -118,17 +120,23 @@ void ballMovementSystem(float dT) {
 }
 
 void cubeRenderSystem(SDL_Renderer* renderer) {
-  SDL_SetRenderDrawColor(renderer, 255, 255 ,255, 1);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 1);
 
-  const auto view = mRegistry.view<PositionComponent, CubeComponent>();
-  for (const entt::entity e : view) {
-    const PositionComponent position = view.get<PositionComponent>(e);
-    const CubeComponent cube = view.get<CubeComponent>(e);
+    const auto view = mRegistry.view<PositionComponent, CubeComponent>();
+    for (const entt::entity e : view) {
+        const PositionComponent position = view.get<PositionComponent>(e);
+        const CubeComponent cube = view.get<CubeComponent>(e);
 
-    SDL_Rect rect = { position.x, position.y, cube.w, cube.h };    
-    SDL_RenderFillRect(renderer, &rect);
-  }
+        // Verificar si la entidad es uno de los paddles y, de ser así, imprimir su posición
+        if (e == paddle1 || e == paddle2) {
+            std::cout << "Rendering paddle at position Y: " << position.y << std::endl;
+        }
+
+        SDL_Rect rect = { position.x, position.y, cube.w, cube.h };
+        SDL_RenderFillRect(renderer, &rect);
+    }
 }
+
 
 Game::Game ()
 {
@@ -196,8 +204,8 @@ void Game::init(const char* title){
     isRunning = true;
 
 }
-void Game::handleEvents(){
 
+void Game::handleEvents() {
     SDL_Event event;
     while(SDL_PollEvent(&event)){
         if(event.type == SDL_QUIT){
@@ -206,35 +214,51 @@ void Game::handleEvents(){
         if(event.type == SDL_KEYDOWN){
             PositionComponent& pad1Position = mRegistry.get<PositionComponent>(paddle1);
             CubeComponent& pad1Rect = mRegistry.get<CubeComponent>(paddle1);
-            PositionComponent& pad2Position = mRegistry.get<PositionComponent>(paddle2);
-            CubeComponent& pad2Rect = mRegistry.get<CubeComponent>(paddle2);
 
             switch(event.key.keysym.sym){
                 case SDLK_w:
-                    if (pad1Position.y - player_speed >= 0){
-                        pad1Position.y -= player_speed;
+                    if (pad1Position.y - MANUAL_PADDLE_SPEED >= 0){
+                        pad1Position.y -= MANUAL_PADDLE_SPEED;
                     }
                     break;
                 case SDLK_s:
-                    if (pad1Position.y + pad1Rect.h + player_speed <= SCREEN_HEIGHT){
-                        pad1Position.y += player_speed;
-                    }
-                    break;
-                case SDLK_UP:
-                    if (pad2Position.y - player_speed >= 0){
-                        pad2Position.y -= player_speed;
-                    }
-                    break;
-                case SDLK_DOWN:
-                    if (pad2Position.y + pad2Rect.h + player_speed <= SCREEN_HEIGHT){
-                        pad2Position.y += player_speed;
+                    if (pad1Position.y + pad1Rect.h + MANUAL_PADDLE_SPEED <= SCREEN_HEIGHT){
+                        pad1Position.y += MANUAL_PADDLE_SPEED;
                     }
                     break;
             }
         }
-
     }
+}
 
+void autoPaddleMovementSystem(float dT) {
+    auto ballView = mRegistry.view<BallComponent, PositionComponent, CubeComponent>();
+    for (auto ball : ballView) {
+        PositionComponent& ballPosition = ballView.get<PositionComponent>(ball);
+        CubeComponent& ballRect = ballView.get<CubeComponent>(ball);
+        PositionComponent& pad2Position = mRegistry.get<PositionComponent>(paddle2);
+        VelocityComponent& pad2Velocity = mRegistry.get<VelocityComponent>(paddle2);
+
+        // Puedes eliminar esta condición para probar si el paddle se mueve en cualquier situación
+        if (ballPosition.x > SCREEN_WIDTH / 2) {
+        
+            float targetY = ballPosition.y + (ballRect.h / 2); // Calcula el centro de la pelota
+            float paddleCenterY = pad2Position.y + (20 / 2); // Asumiendo que la altura del paddle es 20
+
+            if (paddleCenterY < targetY) {
+                    pad2Velocity.y = AI_PADDLE_SPEED; // Mover hacia abajo
+                } else if (paddleCenterY > targetY) {
+                    pad2Velocity.y = -AI_PADDLE_SPEED; // Mover hacia arriba
+                } else {
+                    pad2Velocity.y = 0; // Detener si está en la posición correcta
+                }
+
+                pad2Position.y += pad2Velocity.y * dT;
+            
+            // Agregar una impresión de depuración para verificar la nueva posición
+            std::cout << "New Paddle 2 position: " << pad2Position.y << std::endl;
+        }
+    }
 }
 
 
@@ -242,6 +266,9 @@ void Game::update(){
     ballMovementSystem(dT);
     isRunning = playing;
     winnerTop = player1Won;
+    // Dentro del bucle principal del juego
+    autoPaddleMovementSystem(dT);
+
 
 }
 
