@@ -2,6 +2,9 @@
 #include "game.h"
 
 #include "../entt/entt.hpp"
+//vamos a probar con LUA ahora
+#include "lua.hpp"
+#include <filesystem>
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
@@ -129,7 +132,7 @@ void cubeRenderSystem(SDL_Renderer* renderer) {
 
         // Verificar si la entidad es uno de los paddles y, de ser así, imprimir su posición
         if (e == paddle1 || e == paddle2) {
-            std::cout << "Rendering paddle at position Y: " << position.y << std::endl;
+            // std::cout << "Rendering paddle at position Y: " << position.y << std::endl;
         }
 
         SDL_Rect rect = { position.x, position.y, cube.w, cube.h };
@@ -237,27 +240,38 @@ void autoPaddleMovementSystem(float dT) {
         PositionComponent& ballPosition = ballView.get<PositionComponent>(ball);
         CubeComponent& ballRect = ballView.get<CubeComponent>(ball);
         PositionComponent& pad2Position = mRegistry.get<PositionComponent>(paddle2);
-        VelocityComponent& pad2Velocity = mRegistry.get<VelocityComponent>(paddle2);
 
-        // Puedes eliminar esta condición para probar si el paddle se mueve en cualquier situación
-        if (ballPosition.x > SCREEN_WIDTH / 2) {
-        
-            float targetY = ballPosition.y + (ballRect.h / 2); // Calcula el centro de la pelota
-            float paddleCenterY = pad2Position.y + (20 / 2); // Asumiendo que la altura del paddle es 20
-
-            if (paddleCenterY < targetY) {
-                    pad2Velocity.y = AI_PADDLE_SPEED; // Mover hacia abajo
-                } else if (paddleCenterY > targetY) {
-                    pad2Velocity.y = -AI_PADDLE_SPEED; // Mover hacia arriba
-                } else {
-                    pad2Velocity.y = 0; // Detener si está en la posición correcta
-                }
-
-                pad2Position.y += pad2Velocity.y * dT;
-            
-            // Agregar una impresión de depuración para verificar la nueva posición
-            std::cout << "New Paddle 2 position: " << pad2Position.y << std::endl;
+        // Inicializar el estado de LUA
+        lua_State* L = luaL_newstate();
+        luaL_openlibs(L);
+        if (luaL_dofile(L, "/home/imag1ne/GameEngines/pong2/Game_Loops_Pong/src/Game/paddle_ai.lua") != LUA_OK) {
+            std::cerr << "Error loading LUA script: " << lua_tostring(L, -1) << std::endl;
+            lua_close(L);
+            continue;  // Salta esta iteración si hay un error
         }
+
+        lua_getglobal(L, "calculate_ai_move");
+        lua_pushnumber(L, ballPosition.y);
+        lua_pushnumber(L, ballRect.h);
+        lua_pushnumber(L, pad2Position.y);
+        lua_pushnumber(L, 20);  // Altura del paddle
+        lua_pushnumber(L, AI_PADDLE_SPEED);
+        lua_pushnumber(L, dT);
+
+        std::cout << "Before LUA - Paddle 2 position: " << pad2Position.y << std::endl;
+
+        if (lua_pcall(L, 6, 1, 0) != LUA_OK) {
+            std::cerr << "Error running LUA function: " << lua_tostring(L, -1) << std::endl;
+            lua_close(L);
+            continue;  // Salta esta iteración si hay un error
+        }
+
+        pad2Position.y = lua_tonumber(L, -1);
+        lua_pop(L, 1);  // Limpiar la pila
+
+        std::cout << "After LUA - Paddle 2 position: " << pad2Position.y << std::endl;
+
+        lua_close(L);
     }
 }
 
