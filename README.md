@@ -13,7 +13,7 @@ Este proyecto tiene como objetivo practicar el uso de lenguajes de scripting par
 ## Desarrollos y Aprendizajes
 
 ### Implementación del Paddle Controlado por IA
-- **Desarrollo:** Creación de un sistema `autoPaddleMovementSystem` para mover automáticamente el paddle 2.
+- **Desarrollo:** Creación de un sistema `autoPaddleMovementSystem` para mover automáticamente el paddle 2. (ANTES USABA CPP PERO LO MIGRE A .LUA)
 - **Aprendizaje:** La importancia de ajustar la velocidad del paddle de la IA basándose en la posición de la pelota.
 
 ### Problemas de Compilación y Soluciones
@@ -38,5 +38,7 @@ Este proyecto tiene como objetivo practicar el uso de lenguajes de scripting par
 
 ## Conclusión
 Este laboratorio ha sido una oportunidad valiosa para aprender sobre el scripting en el desarrollo de juegos y la implementación de inteligencia artificial básica en un entorno de juego interactivo. Los desafíos encontrados y superados han reforzado la comprensión de los principios de programación y han proporcionado una experiencia práctica en la resolución de problemas y la optimización del código.
+
+### Ver paddle_ai.lua para la logica del IA
 
 ![Ejemplo de ECS](ECS.gif)
